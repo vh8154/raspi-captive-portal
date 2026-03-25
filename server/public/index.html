@@ -5,27 +5,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Splines Portal</title>
+    <title>I'm OK portal</title>
 </head>
 
 <body>
-    <h2>Yeah, this is the welcome screen, you've made it 🙌</h2>
+    <h2>Welcome to I'm OK. This portal allows users who are connected to send messages to loved ones without Internet.</h2>
+    <h3>Send a Message</h3>
 
-    <p>
-        Have a lot of fun with your own project.<br>
+    <form method="POST" action="/submit">
+        <label>Recipient Email</label><br>
+        <input type="email" name="email" required><br><br>
 
-        Feel free to open an issue if something is not working as expected,
-        but read the troubleshooting section first.<br>
+        <label>Message</label><br>
+        <textarea name="message" required></textarea><br><br>
 
-        If you created a project with a captive portal based on this,
-        feel free to inform me, so that I can look into it 👍
-    </p>
-
-    <p>
-        <strong>Endpoint /api/ping test: </strong>
-        <span id="api-endpoint-test">Waiting for server response...</span>
-    </p>
-
+        <button type="submit">Submit</button>
+    </form>
 
     <script src="index.js"></script>
 </body>

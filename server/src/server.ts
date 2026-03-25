@@ -1,7 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
 import path from 'path';
-import { pong } from './pong';
-
 
 ////////////////////////////// Setup ///////////////////////////////////////////
 
@@ -10,22 +8,17 @@ const FRONTEND_FOLDER = path.join(__dirname, '../', 'public');
 
 const app = express();
 
-// Redirect every request to our application
-// https://raspberrypi.stackexchange.com/a/100118
-// [You need a self-signed certificate if you really want 
-// an https connection. In my experience, this is just a pain to do
-// and probably overkill for a project where you have your own WiFi network
-// without Internet access anyway.]
 app.use((req: Request, res: Response, next: NextFunction) => {
-    if (req.hostname != HOST_NAME) {
+    if (req.hostname !== HOST_NAME && req.hostname !== '192.168.4.1' && req.hostname !==  'localhost') {
         return res.redirect(`http://${HOST_NAME}`);
-    }
-    next();
+     }
+     next();
 });
 
 // Call this AFTER app.use where we do the redirects
 app.use(express.static(FRONTEND_FOLDER));
-
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 /////////////////////////////// Endpoints //////////////////////////////////////
 
@@ -34,7 +27,28 @@ app.get('/', (req, res, next) => {
     res.sendFile(path.join(FRONTEND_FOLDER, 'index.html'));
 });
 
-app.get('/api/ping', pong);
+app.post('/submit', async (req: Request, res: Response) => {
+    try {
+        const params = new URLSearchParams();
+        params.set('email', req.body.email || '');
+        params.set('message', req.body.message || '');
+
+        const backendRes = await fetch('http://127.0.0.1:3001/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params.toString(),
+        });
+
+        const text = await backendRes.text();
+
+        res.status(backendRes.status).send(text);
+    } catch (err) {
+        console.error('Proxy submit error:', err);
+        res.status(500).send('Could not submit message');
+    }
+});
 
 
 ///////////////////////////// Server listening /////////////////////////////////
@@ -47,3 +61,4 @@ app.listen(PORT, () => {
     console.log(`Node version: ${process.version}`);
     console.log(`⚡ Raspberry Pi Server listening on port ${PORT}`);
 });
+
