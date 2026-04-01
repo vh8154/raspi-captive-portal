@@ -9,20 +9,30 @@
 </head>
 
 <body>
-    <h2>Welcome to I'm OK. This portal allows users who are connected to send messages to loved ones without Internet.</h2>
+    <h2>Welcome to I'm OK!</h2>
+    <h3>This portal allows users who are connect to send messages to loved ones without Internet.</h2> 
     <h3>Send a Message</h3>
 
     <form method="POST" action="/submit">
         <label>Recipient Email</label><br>
-        <input type="email" name="email" required><br><br>
+        <input type="email" name="email" required maxlength="254"><br><br>
 
-        <label>Message</label><br>
-        <textarea name="message" required></textarea><br><br>
+        <label>Message (max 100 characters)</label><br>
+        <textarea name="message" required maxlength="100"></textarea><br><br>
+        <div id="counter">0/100</div>
 
         <button type="submit">Submit</button>
     </form>
 
     <script src="index.js"></script>
+    <script>
+        const textarea = document.getElementById("message");
+        const counter = document.getElementById("counter");
+
+        textarea.addEventListener("input", () => {
+          counter.textContent = `${textarea.value.length}/100`;
+        });
+    </script>
 </body>
 
 </html>
